@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Manu Bank – Conversation History</title>
+
+  <style>
+    :root {
+      --bg: #f6fbff;
+      --panel: #ffffff;
+      --text: #052033;
+      --muted: #6b7280;
+      --line: #d7eafe;
+      --blue: #0ea5e9;
+      --blue-dark: #2563eb;
+      --radius: 12px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Inter, sans-serif;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    /* Top bar */
+    header {
+      background: #ffffffcc;
+      backdrop-filter: blur(6px);
+      border-bottom: 1px solid var(--line);
+      padding: 14px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+
+    .brand h1 {
+      font-size: 20px;
+      font-weight: 700;
+      margin: 0;
+    }
+
+    .brand span {
+      color: var(--blue-dark);
+    }
+
+    .user-tag {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 6px 14px;
+      border: 1px solid var(--line);
+      border-radius: 50px;
+      background: #fff;
+    }
+
+    .user-info {
+      display: flex;
+      flex-direction: column;
+      font-size: 13px;
+    }
+
+    .user-info .name {
+      font-weight: 600;
+    }
+    .user-info .status {
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .user-icon {
+      background: var(--blue);
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      font-size: 14px;
+    }
+
+    /* Main Layout */
+    .container {
+      max-width: 1100px;
+      margin: 30px auto;
+      padding: 0 20px;
+    }
+
+    /* Heading */
+    .header-section {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 22px;
+      align-items: flex-end;
+    }
+
+    h2 {
+      font-size: 26px;
+      margin-bottom: 4px;
+    }
+    .header-section p {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .back-btn {
+      font-size: 14px;
+      text-decoration: none;
+      color: var(--blue-dark);
+    }
+
+    /* Toolbar */
+    .toolbar {
+      background: var(--panel);
+      padding: 18px;
+      border-radius: var(--radius);
+      border: 1px solid var(--line);
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      align-items: center;
+    }
+
+    .search-box {
+      position: relative;
+      width: 350px;
+    }
+    .search-box input {
+      width: 100%;
+      padding: 10px 12px;
+      padding-left: 36px;
+      border-radius: var(--radius);
+      border: 1px solid var(--line);
+      font-size: 14px;
+      outline: none;
+    }
+    .search-box input:focus {
+      border-color: var(--blue);
+    }
+
+    .search-box i {
+      position: absolute;
+      top: 50%;
+      left: 12px;
+      transform: translateY(-50%);
+      color: var(--muted);
+    }
+
+    .btn-export {
+      background: var(--blue);
+      color: white;
+      padding: 10px 20px;
+      border-radius: var(--radius);
+      font-weight: 600;
+      font-size: 14px;
+      text-decoration: none;
+    }
+
+    /* Table */
+    .table-wrap {
+      background: var(--panel);
+      border-radius: var(--radius);
+      border: 1px solid var(--line);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th {
+      background: #f0f8ff;
+      padding: 14px;
+      text-align: left;
+      font-size: 12px;
+      color: var(--muted);
+      border-bottom: 1px solid var(--line);
+      text-transform: uppercase;
+    }
+
+    td {
+      padding: 16px;
+      border-bottom: 1px solid var(--line);
+      font-size: 14px;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    .bot-msg {
+      color: var(--muted);
+      border-left: 3px solid var(--blue);
+      padding-left: 10px;
+    }
+
+    .timestamp {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    /* No logs message */
+    .empty-state {
+      text-align: center;
+      padding: 40px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .toolbar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .search-box {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <div class="brand">
+    <h1>Manu <span>Bank</span></h1>
+  </div>
+
+  <div class="user-tag">
+    <div class="user-info">
+      <span class="name">{{ session.get('name', 'User') }}</span>
+      <span class="status">Logged In</span>
+    </div>
+    <div class="user-icon"><i class="fas fa-user"></i></div>
+  </div>
+</header>
+
+<div class="container">
+
+  <div class="header-section">
+    <div>
+      <h2>Conversation History</h2>
+      <p>Your saved interactions with the assistant.</p>
+    </div>
+
+    <a href="/dashboard" class="back-btn">← Back to Dashboard</a>
+  </div>
+
+  <div class="toolbar">
+    <div class="search-box">
+      <i class="fas fa-search"></i>
+      <input id="search" placeholder="Search messages..." />
+    </div>
+
+    <a href="/export_excel" class="btn-export">Download Excel</a>
+  </div>
+
+  <div class="table-wrap">
+    <table id="logTable">
+      <thead>
+        <tr>
+          <th>Your Message</th>
+          <th>Assistant Response</th>
+          <th>Time</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        {% for u, b, t in logs %}
+        <tr>
+          <td>{{ u }}</td>
+          <td><div class="bot-msg">{{ b }}</div></td>
+          <td class="timestamp">{{ t }}</td>
+        </tr>
+        {% else %}
+        <tr>
+          <td colspan="3" class="empty-state">
+            No conversation saved yet.
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+  document.getElementById("search").addEventListener("keyup", function () {
+    let filter = this.value.toLowerCase();
+    document.querySelectorAll("#logTable tbody tr").forEach((row) => {
+      let match = row.textContent.toLowerCase().includes(filter);
+      row.style.display = match ? "" : "none";
+    });
+  });
+</script>
+
+</body>
+</html>

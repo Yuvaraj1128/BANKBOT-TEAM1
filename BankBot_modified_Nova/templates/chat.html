@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Manu Bank — Assistant</title>
+
+  <style>
+    :root{
+      --bg: #f6fbff;          /* page background */
+      --panel: #ffffff;       /* panels/cards */
+      --muted: #6b7280;       /* secondary text */
+      --text: #052033;        /* primary text */
+      --accent: #0ea5e9;      /* cyan */
+      --accent-dark: #2563eb; /* deep blue */
+      --user-bg: #2563eb;     /* user bubble */
+      --bot-bg: #eef9ff;      /* bot bubble */
+      --radius: 14px;
+      --shadow: 0 8px 30px rgba(37,99,235,0.06);
+    }
+
+    * { box-sizing: border-box; font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial; }
+    html,body { height:100%; margin:0; background:var(--bg); color:var(--text); -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; }
+
+    /* header */
+    header {
+      background: transparent;
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      justify-content: center;
+      border-bottom: 1px solid rgba(5,32,51,0.04);
+      position: sticky;
+      top:0;
+      z-index: 20;
+    }
+    header .title {
+      display:flex; flex-direction:column; align-items:center;
+    }
+    header h1 { margin:0; font-size:18px; font-weight:700; color:var(--text); }
+    header p { margin:2px 0 0; font-size:12px; color:var(--muted); }
+
+    /* layout */
+    .wrap {
+      max-width: 900px;
+      margin: 28px auto;
+      padding: 0 18px 36px;
+      display:flex;
+      flex-direction:column;
+      gap:16px;
+    }
+
+    .card {
+      background:var(--panel);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(5,32,51,0.04);
+      overflow: hidden;
+    }
+
+    /* chat area */
+    .chat-area {
+      display:flex;
+      flex-direction:column;
+      height: calc(80vh);
+      min-height: 420px;
+    }
+
+    .chat-box {
+      flex:1;
+      padding: 18px;
+      overflow-y:auto;
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+      background: linear-gradient(180deg, rgba(14,165,233,0.03), transparent 40%);
+    }
+
+    .msg {
+      max-width: 78%;
+      padding: 12px 14px;
+      border-radius: 12px;
+      font-size: 14px;
+      line-height:1.45;
+      word-break: break-word;
+      box-shadow: 0 2px 8px rgba(9,30,63,0.03);
+      animation: fadeIn 160ms ease;
+    }
+
+    .bot {
+      background: var(--bot-bg);
+      color: var(--text);
+      align-self: flex-start;
+      border: 1px solid rgba(2,48,72,0.03);
+    }
+
+    .user {
+      background: var(--user-bg);
+      color: #fff;
+      align-self: flex-end;
+      border-radius: 12px 12px 8px 12px;
+      box-shadow: 0 8px 30px rgba(37,99,235,0.12);
+    }
+
+    .meta {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 6px;
+      align-self: flex-start;
+    }
+
+    /* input area */
+    form {
+      display:flex;
+      gap:10px;
+      padding: 14px;
+      align-items:center;
+      border-top: 1px solid rgba(5,32,51,0.04);
+      background: linear-gradient(180deg, #ffffff, #f8fbff);
+    }
+
+    input[type="text"] {
+      flex:1;
+      padding: 12px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(5,32,51,0.06);
+      background: white;
+      font-size: 14px;
+      color: var(--text);
+      outline: none;
+      transition: box-shadow .15s, border-color .15s;
+      box-shadow: 0 2px 8px rgba(14,165,233,0.03);
+    }
+    input[type="text"]:focus {
+      border-color: var(--accent);
+      box-shadow: 0 6px 18px rgba(14,165,233,0.08);
+    }
+
+    button {
+      padding: 10px 16px;
+      border-radius: 999px;
+      border: none;
+      background: linear-gradient(90deg, var(--accent), var(--accent-dark));
+      color: white;
+      font-weight:700;
+      cursor: pointer;
+      box-shadow: 0 8px 26px rgba(14,165,233,0.08);
+    }
+    button:active{ transform: translateY(1px); }
+
+    /* small typing indicator style */
+    .typing {
+      font-size:13px;
+      color: var(--muted);
+    }
+
+    @keyframes fadeIn { from { opacity:0; transform: translateY(6px); } to { opacity:1; transform: translateY(0); } }
+
+    /* responsive */
+    @media (max-width:720px){
+      .wrap{ padding: 0 12px 28px; }
+      .chat-area{ height: 72vh; }
+      .msg{ font-size:15px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="title">
+      <h1>Manu Bank Assistant</h1>
+      <p>Secure — Simple — Helpful</p>
+    </div>
+  </header>
+
+  <div class="wrap card">
+    <div class="chat-area">
+      <div id="chatBox" class="chat-box">
+        <!-- Initial bot greeting (kept simple) -->
+        <div class="msg bot">👋 Hi — I'm the Manu Bank assistant. How can I help you today?</div>
+      </div>
+
+      <form id="chatForm" autocomplete="off">
+        <input id="userInput" type="text" placeholder="Type your message…" />
+        <button type="submit">Send</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // preserve endpoints: /reset_context and /get_response
+    (function(){
+      const chatBox = document.getElementById('chatBox');
+      const chatForm = document.getElementById('chatForm');
+      const userInput = document.getElementById('userInput');
+
+      // attempt reset context; fail silently if endpoint unavailable
+      fetch('/reset_context', { method: 'POST' }).catch(()=>{});
+
+      function scrollToBottom(){
+        chatBox.scrollTop = chatBox.scrollHeight;
+      }
+
+      function addUser(text){
+        const el = document.createElement('div');
+        el.className = 'msg user';
+        el.textContent = text;
+        chatBox.appendChild(el);
+        scrollToBottom();
+      }
+
+      function addBot(htmlText, intent){
+        const el = document.createElement('div');
+        el.className = 'msg bot';
+        // preserve line breaks
+        el.innerHTML = String(htmlText).replace(/\n/g,'<br>');
+        chatBox.appendChild(el);
+
+        if(intent && intent !== 'unknown' && intent !== 'greet'){
+          const meta = document.createElement('div');
+          meta.className = 'meta';
+          meta.textContent = 'Intent: ' + intent;
+          chatBox.appendChild(meta);
+        }
+
+        scrollToBottom();
+      }
+
+      chatForm.addEventListener('submit', async function(e){
+        e.preventDefault();
+        const text = userInput.value.trim();
+        if(!text) return;
+        addUser(text);
+        userInput.value = '';
+
+        // typing indicator
+        const loader = document.createElement('div');
+        loader.className = 'msg bot typing';
+        loader.textContent = 'Typing…';
+        chatBox.appendChild(loader);
+        scrollToBottom();
+
+        try{
+          const res = await fetch('/get_response', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: text })
+          });
+          const data = await res.json();
+          loader.remove();
+          addBot(data.response || 'Sorry — no reply.', data.intent || '');
+        }catch(err){
+          loader.remove();
+          addBot('⚠️ Connection error — please try again later.');
+          console.error(err);
+        }
+      });
+
+      // allow Enter to submit and Shift+Enter for newline (if desired)
+      userInput.addEventListener('keydown', function(e){
+        if(e.key === 'Enter' && !e.shiftKey){
+          e.preventDefault();
+          chatForm.dispatchEvent(new Event('submit', { cancelable: true }));
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
