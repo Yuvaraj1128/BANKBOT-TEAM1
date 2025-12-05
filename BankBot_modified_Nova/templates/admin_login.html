@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Manu Bank — Admin Login</title>
+
+    <!-- Icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+
+    <style>
+      :root{
+        --bg:#f4fbff;
+        --panel:#ffffff;
+        --accent:#0ea5e9;
+        --accent-2:#2563eb;
+        --muted:#6b7280;
+        --text:#052033;
+        --border:#e0f2ff;
+        --radius:12px;
+      }
+
+      *{box-sizing:border-box;margin:0;padding:0}
+      html,body{height:100%;font-family:Inter,system-ui,-apple-system,'Segoe UI',Roboto,Arial;background:linear-gradient(180deg,#f8fdff 0%,var(--bg)60%);color:var(--text);-webkit-font-smoothing:antialiased}
+
+      /* center container */
+      .wrap{
+        min-height:100vh;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        padding:20px;
+      }
+
+      .card{
+        width:100%;
+        max-width:420px;
+        background:var(--panel);
+        border:1px solid var(--border);
+        border-radius:16px;
+        padding:28px;
+        box-shadow:0 18px 40px rgba(14,165,233,0.06);
+        text-align:center;
+      }
+
+      h1{font-size:20px;margin-bottom:6px}
+      p.subtitle{margin:0 0 18px;color:var(--muted);font-size:13px}
+
+      /* flash */
+      .flash{
+        background:#fff7f7;
+        border:1px solid #fde2e2;
+        color:#b91c1c;
+        padding:8px 10px;
+        border-radius:8px;
+        font-size:13px;
+        margin-bottom:12px;
+      }
+
+      form{margin-top:6px;text-align:left}
+      .field{margin-bottom:12px;position:relative}
+      label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
+      input{
+        width:100%;
+        padding:10px 12px;
+        border-radius:10px;
+        border:1px solid var(--border);
+        background:transparent;
+        font-size:14px;
+        color:var(--text);
+      }
+      input:focus{outline:none;box-shadow:0 6px 18px rgba(14,165,233,0.08);border-color:var(--accent)}
+
+      .btn{
+        width:100%;
+        padding:11px 14px;
+        border-radius:10px;
+        border:0;
+        cursor:pointer;
+        font-weight:700;
+        font-size:14px;
+      }
+      .btn-primary{background:linear-gradient(90deg,var(--accent),var(--accent-2));color:#fff}
+      .btn-ghost{background:transparent;border:1px solid var(--border);color:var(--muted)}
+
+      .links{display:flex;justify-content:space-between;align-items:center;margin-top:12px;font-size:13px;color:var(--muted)}
+      .links a{color:var(--muted);text-decoration:none}
+      .links a:hover{color:var(--accent-2)}
+
+      footer{margin-top:18px;text-align:center;color:var(--muted);font-size:13px}
+      @media (max-width:480px){.card{padding:20px}}
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <div class="card">
+        <h1>Manu Bank</h1>
+        <p class="subtitle">Corporate Admin — Secure Access</p>
+
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            {% for message in messages %}
+              <div class="flash"><i class="fa-solid fa-triangle-exclamation"></i>&nbsp; {{ message }}</div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
+        <form action="/admin_login" method="post" autocomplete="off">
+          <div class="field">
+            <label for="username">Admin ID</label>
+            <input id="username" name="username" type="text" required />
+          </div>
+
+          <div class="field">
+            <label for="password">Secure Key</label>
+            <input id="password" name="password" type="password" required />
+          </div>
+
+          <button type="submit" class="btn btn-primary">
+            <i class="fa-solid fa-fingerprint"></i>&nbsp; Verify &amp; Login
+          </button>
+        </form>
+
+        <div class="links" style="margin-top:16px">
+          <a href="/">← Return to site</a>
+          <a href="{{ url_for('login') }}" class="btn-ghost" style="padding:8px 10px;border-radius:8px">User Sign In</a>
+        </div>
+
+        <footer>
+          <div>&copy; {{ current_year }} Manu Bank</div>
+        </footer>
+      </div>
+    </div>
+  </body>
+</html>
